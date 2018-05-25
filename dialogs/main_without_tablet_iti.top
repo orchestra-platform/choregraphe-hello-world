@@ -1,0 +1,92 @@
+topic: ~main_without_tablet()
+language: iti
+
+
+##### CONCEPTS #####
+
+### Human Concepts
+concept:(no) [no "no grazie" "non {per} oggi"]
+concept:(yes) [sì si grazie volentieri certo "di sicuro" sicuramente certamente]
+concept:(repeat_it) [come cosa "[come cosa che] hai detto" "puoi ripetere" "ripeti" "non ho capito" "non capisco" "{parla} più forte"]
+concept:(stop) [stop "basta {così}" fine esci uscita]
+
+### Robot Concepts
+concept:(pepper) \rspd=120\ Pèpper \rspd=100\
+concept:(cool) \pau=250\ ^rand["OK!" "Bene!" "Ottimo!" "Fantastico!"]
+concept:(not_understood) ^rand["Mi dispiace, non ho capito!" "Scusa, non ho capito!"]
+
+
+##### DIALOG #####
+
+u:(~stop) $onStopped=1
+u:(e:onStart) ^gotoReactivate(init_variables)
+
+
+### Init variables
+
+proposal:%init_variables
+
+    $HelloWorld/Adverb="" ^gotoReactivate(wait_human)
+
+
+### Intro
+
+proposal:%wait_human
+
+    u:(ciao {pepper}) ^start(animations/Stand/Gestures/Salute_3)
+        Ciao \pau=500\ mi chiamo ~pepper . \pau=1000\
+        Posso paralarti un po' di me?
+
+            u1:(~yes) ~cool \pau=500\ ^gotoReactivate(self_presentation)
+
+            u1:(~no) OK, come preferisci. \pau=500\ ^gotoReactivate(bye)
+
+            u1:(e:Dialog/NotUnderstood) ~not_understood \pau=250\ Posso parlarti un po' di me? ^stayInScope
+
+            u1:(~repeat_it) Dicevo, posso parlarti un po' di me? ^stayInScope
+
+### Self presentation
+
+proposal: %self_presentation
+
+    Sono un roboo umanoide, progettato in Francia, sviluppato in Francia e Giappone, e costruito in Cina.
+    Eccetera eccetera. \pau=1000\
+    Posso rubarti un secondo per un parere su questa chiacchierata?
+
+        u1:(~yes)
+            ~cool \pau=500\ ^gotoReactivate(survey)
+
+        u1:(~no)
+            Va beh, non fa niente! \pau=500\ ^gotoReactivate(bye)
+
+        u1:(e:Dialog/NotUnderstood)
+            ~not_understood \pau=250\ Puoi dedicarmi un secondo per un parere su questa chiacchierata? ^stayInScope
+
+        u1:(~repeat_it)
+            Mi chiedevo se posso rubarti un secondo per avere un tuo parere sulla nostra chiacchierata. ^stayInScope
+
+
+### Survey
+
+proposal:%survey
+
+    Come sono andato?
+
+        u1:([bene benissimo "alla grande" perfetto])
+            ^run(animations/Stand/Emotions/Positive/Happy_1) Grazie! $HelloWorld/Adverb=molto \pau=1000\ ^gotoReactivate(bye)
+
+        u1:([normale benino "così così" "abbastanza bene" "non benissimo"])
+            ^start(animations/Stand/Emotions/Negative/Sorry_1) \pau=500\ Cercherò di fare meglio in futuro. ^wait(animations/Stand/Emotions/Negative/Sorry_1)
+            $HelloWorld/Adverb="" \pau=1000\
+            ^gotoReactivate(bye)
+
+        u1:([male malissimo])
+            ^run(animations/Stand/Emotions/Negative/Sad_1) Mi dispiace. $HelloWorld/Adverb=comunque ^gotoReactivate(bye)
+
+
+### Goodbye
+
+proposal: %bye
+
+    Sono ["^exist(HelloWorld/Adverb) $HelloWorld/Adverb" "^notExist(HelloWorld/Adverb) "] contento di aver chiacchierato con te. \pau=500\ Ciao e a presto!
+    $onRestart=1

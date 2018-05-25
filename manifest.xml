@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package uuid="helloworld-1823f9" version="0.1.0">
+ <names>
+  <name lang="en_US">Hello World</name>
+  <name lang="it_IT">Ciao Mondo</name>
+ </names>
+ <descriptions>
+  <description lang="en_US">My first application</description>
+  <description lang="it_IT">La mia prima applicazione</description>
+ </descriptions>
+ <supportedLanguages>
+  <language>en_US</language>
+  <language>it_IT</language>
+ </supportedLanguages>
+ <descriptionLanguages>
+  <language>en_US</language>
+  <language>it_IT</language>
+ </descriptionLanguages>
+ <contents>
+  <behaviorContent path="behaviors">
+   <userRequestable/>
+   <nature>interactive</nature>
+   <triggerSentences>
+    <sentence lang="en_US">Hello World</sentence>
+    <sentence lang="it_IT">Ciao Mondo</sentence>
+   </triggerSentences>
+   <permissions>
+    <canRunOnPod/>
+   </permissions>
+  </behaviorContent>
+ </contents>
+ <requirements>
+  <naoqiRequirement minVersion="2.5"/>
+  <robotRequirement model="JULIETTE"/>
+ </requirements>
+</package>
